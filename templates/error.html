@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    小鲜果儿|错误
+{% endblock %}
+
+
+{% block content %}
+    {{ message }}, <a href="{{ redirect_to }}">返回</a>
+{% endblock %}

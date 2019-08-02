@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    首页
+{% endblock %}
+
+
+{% block head_extends %}
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+    <script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+{% endblock %}
+
+
+{% block nav_home_active %}
+    active
+{% endblock %}
+
+
+{% block content %}
+    <h3 class="home-content">欢迎访问我的网站~打开新世界的大门</h3>
+    <div id="container"></div>
+    <div class="hot_statistics">
+        <h3>今日热门点击</h3>
+        <ul>
+            {% for today_hot_date in today_hot_dates %}
+                <li>
+                    <a href="{% url 'blog_detail' blog_pk=today_hot_date.content_object.pk %}">{{ today_hot_date.content_object.title }}</a>({{ today_hot_date.read_num }})
+                </li>
+            {% empty %}
+                <li>今日暂时没有热门博客</li>
+            {% endfor %}
+
+
+            <h3>昨日热门点击</h3>
+            <ul>
+                {% for yesterday_hot_date in yesterday_hot_dates %}
+                    <li>
+                        <a href="{% url 'blog_detail' blog_pk=yesterday_hot_date.content_object.pk %}">{{ yesterday_hot_date.content_object.title }}</a>({{ yesterday_hot_date.read_num }})
+                    </li>
+                {% empty %}
+                    <li>昨日暂时没有热门博客</li>
+                {% endfor %}
+
+            </ul>
+
+
+            <h3>7日热门点击</h3>
+            <ul>
+                {% for hot_data_for_7_day in hot_data_for_7_days %}
+                    <li>
+                        <a href="{% url 'blog_detail' blog_pk=hot_data_for_7_day.id %}">{{ hot_data_for_7_day.title }}</a>({{ hot_data_for_7_day.read_num_sum }})
+                    </li>
+                {% empty %}
+                    <li>7日暂时没有热门博客</li>
+                {% endfor %}
+
+            </ul>
+        </ul>
+    </div>
+    <script>
+        // 图表配置
+        var options = {
+            chart: {
+                type: 'line'                          //指定图表的类型，默认是折线图（line）
+            },
+            title: {
+                text: null                  // 标题
+            },
+            colors: [
+                '#058DC7', '#FF9655'
+            ],
+            xAxis: {
+                categories: {{ dates|safe }},
+                tickmarkPlacement: 'on' // x 轴分类
+            },
+            yAxis: {
+                title: {
+                    text: null               // y 轴标题
+                },
+                labels: {
+                    enabled: false
+                },
+                gridLineDashStyle: 'Dash'
+
+            },
+            series: [{                              // 数据列
+                name: '7日阅读量变化',                        // 数据列名
+                data: {{ read_nums }}                    // 数据
+            },
+                {                              // 数据列
+                    name: '7日访问量变化',                        // 数据列名
+                    data: [3, 4, 1, 7, 2, 2, 1]                    // 数据
+                }
+            ],
+            credits: {
+                enabled: false // 禁用版权信息
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            }
+        };
+        // 图表初始化函数
+        var chart = Highcharts.chart('container', options);
+    </script>
+{% endblock %}
